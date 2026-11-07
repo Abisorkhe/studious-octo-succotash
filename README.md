@@ -20,6 +20,25 @@ Windows games** (real DirectPlay), without Steam.
   `DPSYS_*` constants) that both RedirectPlay and this prototype build
   against. Note its readme: DirectPlay is 32-bit only — build **x86**.
 
+## Reference repositories
+
+This repo is only the `direct-bridge` prototype itself — the codebases
+above are **not** vendored or included here. Clone them separately as
+siblings of this directory (as shown) if you want to build/test against
+them:
+
+| Local path | Upstream repository | Role in this project |
+|---|---|---|
+| `../RedirectPlay` | [Sh0wdown/RedirectPlay](https://github.com/Sh0wdown/RedirectPlay) | Base for the Windows `dplay.dll` provider this prototype adds to |
+| `../directplay` | [Olde-Skuul/directplay](https://github.com/Olde-Skuul/directplay) | DirectX SDK headers/libs/samples (`Include/dplay.h`, …) |
+| `../pc_decomp_strhld` | [phys-winner/pc_decomp_strhld](https://github.com/phys-winner/pc_decomp_strhld) | Android Stronghold port; source of the SHL7 protocol (`android/host/dplay.c`) |
+
+```bash
+git clone https://github.com/Sh0wdown/RedirectPlay ../RedirectPlay
+git clone https://github.com/Olde-Skuul/directplay ../directplay
+git clone https://github.com/phys-winner/pc_decomp_strhld ../pc_decomp_strhld
+```
+
 ## Design
 
 Add a second provider to a RedirectPlay fork, `CShl7PlayProvider`

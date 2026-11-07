@@ -1,0 +1,42 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.venv/
+venv/
+
+# C / C++ build output
+*.o
+*.obj
+*.a
+*.lib
+*.so
+*.dll
+*.exe
+*.out
+*.d
+*.s
+build/
+out/
+Debug/
+Release/
+*.pdb
+*.ilk
+*.exp
+*.user
+*.suo
+*.VC.db
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Secrets / local config
+.env
+*.pem
+*.key
+*.pfx
+*.p12

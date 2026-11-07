@@ -1,0 +1,165 @@
+#pragma once
+// Minimal DirectPlay header shim for Linux test builds. Layouts and
+// constants are copied from Olde-Skuul/directplay/Include/dplay.h
+// (DirectX SDK Aug 2007); only the IDirectPlay4 surface used by
+// Shl7PlayProvider is declared.
+#include <windows.h>
+
+typedef DWORD DPID;
+typedef GUID FAR* LPGUID;
+typedef const GUID FAR* LPCGUID;
+typedef struct DPLCONNECTION DPLCONNECTION, FAR* LPDPLCONNECTION;
+typedef struct DPCHAT DPCHAT, FAR* LPDPCHAT;
+typedef const void* LPCDPSECURITYDESC;
+typedef const void* LPCDPCREDENTIALS;
+
+typedef DPID FAR* LPDPID;
+#define DPID_SYSMSG 0
+#define DPID_ALLPLAYERS 0
+#define DPID_SERVERPLAYER 1
+#define DPID_RESERVEDRANGE 100
+#define DPID_UNKNOWN 0xFFFFFFFFu
+
+typedef struct {
+    DWORD dwSize; DWORD dwFlags; DWORD dwMaxBufferSize; DWORD dwMaxQueueSize;
+    DWORD dwMaxPlayers; DWORD dwHundredBaud; DWORD dwLatency;
+    DWORD dwMaxLocalPlayers; DWORD dwHeaderLength; DWORD dwTimeout;
+} DPCAPS, FAR* LPDPCAPS;
+#define DPCAPS_ISHOST 0x00000002
+
+typedef struct {
+    DWORD dwSize; DWORD dwFlags;
+    GUID guidInstance; GUID guidApplication;
+    DWORD dwMaxPlayers; DWORD dwCurrentPlayers;
+    union { LPWSTR lpszSessionName; LPSTR lpszSessionNameA; };
+    union { LPWSTR lpszPassword; LPSTR lpszPasswordA; };
+    DWORD_PTR dwReserved1; DWORD_PTR dwReserved2;
+    DWORD_PTR dwUser1; DWORD_PTR dwUser2; DWORD_PTR dwUser3; DWORD_PTR dwUser4;
+} DPSESSIONDESC2, FAR* LPDPSESSIONDESC2;
+typedef const DPSESSIONDESC2 FAR* LPCDPSESSIONDESC2;
+
+typedef struct {
+    DWORD dwSize; DWORD dwFlags;
+    union { LPWSTR lpszShortName; LPSTR lpszShortNameA; };
+    union { LPWSTR lpszLongName; LPSTR lpszLongNameA; };
+} DPNAME, FAR* LPDPNAME;
+typedef const DPNAME FAR* LPCDPNAME;
+
+typedef struct { DWORD dwType; } DPMSG_GENERIC, FAR* LPDPMSG_GENERIC;
+typedef BOOL (CALLBACK *LPDPENUMSESSIONSCALLBACK2)(LPCDPSESSIONDESC2, LPVOID, DWORD, LPVOID);
+typedef BOOL (CALLBACK *LPDPENUMPLAYERSCALLBACK2)(DPID, DWORD, LPCDPNAME, DWORD, LPVOID);
+typedef BOOL (CALLBACK *LPDPENUMCONNECTIONSCALLBACK)(LPCGUID, LPVOID, DWORD, LPCDPNAME, DWORD, LPVOID);
+typedef struct {
+    DWORD dwType; DWORD dwPlayerType; DPID dpId; DWORD dwCurrentPlayers;
+    LPVOID lpData; DWORD dwDataSize; DPNAME dpnName; DPID dpIdParent; DWORD dwFlags;
+} DPMSG_CREATEPLAYERORGROUP, FAR* LPDPMSG_CREATEPLAYERORGROUP;
+typedef struct {
+    DWORD dwType; DWORD dwPlayerType; DPID dpId;
+    LPVOID lpLocalData; DWORD dwLocalDataSize; LPVOID lpRemoteData; DWORD dwRemoteDataSize;
+    DPNAME dpnName; DPID dpIdParent; DWORD dwFlags;
+} DPMSG_DESTROYPLAYERORGROUP, FAR* LPDPMSG_DESTROYPLAYERORGROUP;
+typedef struct {
+    DWORD dwType; DWORD dwPlayerType; DPID dpId; LPVOID lpData; DWORD dwDataSize;
+} DPMSG_SETPLAYERORGROUPDATA, FAR* LPDPMSG_SETPLAYERORGROUPDATA;
+typedef struct { DWORD dwType; DPSESSIONDESC2 dpDesc; } DPMSG_SETSESSIONDESC, FAR* LPDPMSG_SETSESSIONDESC;
+typedef DPMSG_GENERIC DPMSG_SESSIONLOST, FAR* LPDPMSG_SESSIONLOST;
+
+#define DPSYS_CREATEPLAYERORGROUP 0x0003
+#define DPSYS_DESTROYPLAYERORGROUP 0x0005
+#define DPSYS_SESSIONLOST 0x0031
+#define DPSYS_SETPLAYERORGROUPDATA 0x0102
+#define DPSYS_SETSESSIONDESC 0x0104
+#define DPPLAYERTYPE_PLAYER 1
+
+#define DPSESSION_NEWPLAYERSDISABLED 0x00000001
+#define DPSESSION_PASSWORDREQUIRED 0x00000400
+
+#define DPOPEN_CREATE 0x00000002
+#define DPOPEN_JOIN 0x00000001
+#define DPOPEN_RETURNSTATUS 0x00000004
+
+#define DPPLAYER_SERVERPLAYER 0x00000001
+#define DPPLAYER_SPECTATOR 0x00000020
+
+#define DPSEND_GUARANTEED 0x00000002
+#define DPSEND_ASYNC 0x00000001
+#define DPSEND_NOSENDCOMPLETEMSG 0x00000010
+
+#define DPRECEIVE_ALL 0x00000001
+#define DPRECEIVE_TOPLAYER 0x00000002
+#define DPRECEIVE_FROMPLAYER 0x00000004
+#define DPRECEIVE_PEEK 0x00000008
+
+#define DP_OK ((HRESULT)0)
+#define DPERR_GENERIC ((HRESULT)0x88770002)
+#define DPERR_INVALIDPARAM ((HRESULT)0x88770031)
+#define DPERR_INVALIDPLAYER ((HRESULT)0x88770096)
+#define DPERR_NOCONNECTION ((HRESULT)0x887700AA)
+#define DPERR_NOMESSAGES ((HRESULT)0x887700BE)
+#define DPERR_BUFFERTOOSMALL ((HRESULT)0x8877001E)
+#define DPERR_PENDING ((HRESULT)0x88770011)
+#define DPERR_UNINITIALIZED ((HRESULT)0x88770029)
+#define DPERR_ALREADYINITIALIZED ((HRESULT)0x88770028)
+#define DPERR_NOSERVICEPROVIDER ((HRESULT)0x8877009A)
+#define DPERR_CANCELLED ((HRESULT)0x88770008)
+#define DPERR_TIMEOUT ((HRESULT)0x887700AA)
+#define DPERR_UNSUPPORTED ((HRESULT)0x80004001)
+
+#define DPCONNECTION_DIRECTPLAY 0x00000001
+#define DPCONNECTION_LOBBY 0x00000002
+
+struct IDirectPlay4 : public IUnknown {
+    virtual HRESULT WINAPI AddPlayerToGroup(DPID, DPID) = 0;
+    virtual HRESULT WINAPI Close(void) = 0;
+    virtual HRESULT WINAPI CreateGroup(LPDPID, LPDPNAME, LPVOID, DWORD, DWORD) = 0;
+    virtual HRESULT WINAPI CreatePlayer(LPDPID, LPDPNAME, HANDLE, LPVOID, DWORD, DWORD) = 0;
+    virtual HRESULT WINAPI DeletePlayerFromGroup(DPID, DPID) = 0;
+    virtual HRESULT WINAPI DestroyGroup(DPID) = 0;
+    virtual HRESULT WINAPI DestroyPlayer(DPID) = 0;
+    virtual HRESULT WINAPI EnumGroupPlayers(DPID, LPGUID, LPDPENUMPLAYERSCALLBACK2, LPVOID, DWORD) = 0;
+    virtual HRESULT WINAPI EnumGroups(LPGUID, LPDPENUMPLAYERSCALLBACK2, LPVOID, DWORD) = 0;
+    virtual HRESULT WINAPI EnumPlayers(LPGUID, LPDPENUMPLAYERSCALLBACK2, LPVOID, DWORD) = 0;
+    virtual HRESULT WINAPI EnumSessions(LPDPSESSIONDESC2, DWORD, LPDPENUMSESSIONSCALLBACK2, LPVOID, DWORD) = 0;
+    virtual HRESULT WINAPI GetCaps(LPDPCAPS, DWORD) = 0;
+    virtual HRESULT WINAPI GetGroupData(DPID, LPVOID, LPDWORD, DWORD) = 0;
+    virtual HRESULT WINAPI GetGroupName(DPID, LPVOID, LPDWORD) = 0;
+    virtual HRESULT WINAPI GetMessageCount(DPID, LPDWORD) = 0;
+    virtual HRESULT WINAPI GetPlayerAddress(DPID, LPVOID, LPDWORD) = 0;
+    virtual HRESULT WINAPI GetPlayerCaps(DPID, LPDPCAPS, DWORD) = 0;
+    virtual HRESULT WINAPI GetPlayerData(DPID, LPVOID, LPDWORD, DWORD) = 0;
+    virtual HRESULT WINAPI GetPlayerName(DPID, LPVOID, LPDWORD) = 0;
+    virtual HRESULT WINAPI GetSessionDesc(LPVOID, LPDWORD) = 0;
+    virtual HRESULT WINAPI Initialize(LPGUID) = 0;
+    virtual HRESULT WINAPI Open(LPDPSESSIONDESC2, DWORD) = 0;
+    virtual HRESULT WINAPI Receive(LPDPID, LPDPID, DWORD, LPVOID, LPDWORD) = 0;
+    virtual HRESULT WINAPI Send(DPID, DPID, DWORD, LPVOID, DWORD) = 0;
+    virtual HRESULT WINAPI SetGroupData(DPID, LPVOID, DWORD, DWORD) = 0;
+    virtual HRESULT WINAPI SetGroupName(DPID, LPDPNAME, DWORD) = 0;
+    virtual HRESULT WINAPI SetPlayerData(DPID, LPVOID, DWORD, DWORD) = 0;
+    virtual HRESULT WINAPI SetPlayerName(DPID, LPDPNAME, DWORD) = 0;
+    virtual HRESULT WINAPI SetSessionDesc(LPDPSESSIONDESC2, DWORD) = 0;
+    virtual HRESULT WINAPI AddGroupToGroup(DPID, DPID) = 0;
+    virtual HRESULT WINAPI CreateGroupInGroup(DPID, LPDPID, LPDPNAME, LPVOID, DWORD, DWORD) = 0;
+    virtual HRESULT WINAPI DeleteGroupFromGroup(DPID, DPID) = 0;
+    virtual HRESULT WINAPI EnumConnections(LPCGUID, LPDPENUMCONNECTIONSCALLBACK, LPVOID, DWORD) = 0;
+    virtual HRESULT WINAPI EnumGroupsInGroup(DPID, LPGUID, LPDPENUMPLAYERSCALLBACK2, LPVOID, DWORD) = 0;
+    virtual HRESULT WINAPI GetGroupConnectionSettings(DWORD, DPID, LPVOID, LPDWORD) = 0;
+    virtual HRESULT WINAPI InitializeConnection(LPVOID, DWORD) = 0;
+    virtual HRESULT WINAPI SecureOpen(LPCDPSESSIONDESC2, DWORD, LPCDPSECURITYDESC, LPCDPCREDENTIALS) = 0;
+    virtual HRESULT WINAPI SendChatMessage(DPID, DPID, DWORD, LPDPCHAT) = 0;
+    virtual HRESULT WINAPI SetGroupConnectionSettings(DWORD, DPID, LPDPLCONNECTION) = 0;
+    virtual HRESULT WINAPI StartSession(DWORD, DPID) = 0;
+    virtual HRESULT WINAPI GetGroupFlags(DPID, LPDWORD) = 0;
+    virtual HRESULT WINAPI GetGroupParent(DPID, LPDPID) = 0;
+    virtual HRESULT WINAPI GetPlayerAccount(DPID, DWORD, LPVOID, LPDWORD) = 0;
+    virtual HRESULT WINAPI GetPlayerFlags(DPID, LPDWORD) = 0;
+    virtual HRESULT WINAPI GetGroupOwner(DPID, LPDPID) = 0;
+    virtual HRESULT WINAPI SetGroupOwner(DPID, DPID) = 0;
+    virtual HRESULT WINAPI SendEx(DPID, DPID, DWORD, LPVOID, DWORD, DWORD, DWORD, LPVOID, DWORD_PTR*) = 0;
+    virtual HRESULT WINAPI GetMessageQueue(DPID, DPID, DWORD, LPDWORD, LPDWORD) = 0;
+    virtual HRESULT WINAPI CancelMessage(DWORD, DWORD) = 0;
+    virtual HRESULT WINAPI CancelPriority(DWORD, DWORD, DWORD) = 0;
+};
+// Linux shim note: callback typedefs are collapsed to LPVOID above; the
+// provider only stores/passes them through, and the test harness calls
+// EnumSessions with a real callback via a cast (see provider_linux_test.cpp).
